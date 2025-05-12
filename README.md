@@ -1,4 +1,4 @@
-# cma
+# Custome Memory Allocator
 Sure! Creating your own memory allocator is a great project for understanding how dynamic memory management works at a low level. Below is a basic guide on how you might approach building your own allocator, modeled after `malloc`, `calloc`, `realloc`, and `free`. This guide is intended to provide a high-level roadmap of the project, and you will need to implement the functions yourself, as per your project requirements.
 
 ### **Overview of What You're Building**
