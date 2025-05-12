@@ -18,7 +18,7 @@ struct list {
 } static List;
 
 
-void * mymalloc(size_t size) {
+void *mymalloc(size_t size) {
     Block *current = NULL;
     if (List.head_node == NULL) {
         void *head_ptr = mmap(NULL, PAGE_SIZE);
