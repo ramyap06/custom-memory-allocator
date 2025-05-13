@@ -17,32 +17,61 @@ struct list {
     size_t available;
 } static List;
 
-
 void *mymalloc(size_t size) {
-    Block *current = NULL;
+    Block *reserved = NULL;
     if (List.head_node == NULL) {
-        void *head_ptr = mmap(NULL, PAGE_SIZE);
-        if (head_ptr == NULL) {
+        Block *mem_ptr = mmap(NULL, PAGE_SIZE);
+        if (mem_ptr == NULL) {
             return ferror("mmap failed");
         }
-        List.head_node = head_ptr;
-        current = head_ptr;
+        List.head_node = mem_ptr;
+        reserved = mem_ptr;
     } else {
         Block *prev = NULL;
-        current = List.head_node;
-        while (!current->is_free) {
-            prev = current;
-            current = current->next;
+        Block *curr = List.head_node;
+        int size_diff = -1;
+        int best_size = 0;
+        while (curr != NULL && size_diff != 0) {
+            size_diff = curr->size - size;
+            if (size_diff < best_size && size_diff >= 0) {
+                best_size = size_diff;
+            }
+            prev = curr;
+            curr = curr->next;
         }
-        prev->next = current;
+        curr = List.head_node;
+        while (curr != NULL && size_diff != best_size) {
+            size_diff = curr->size - size;
+            prev = curr;
+            curr = curr->next;
+        }
+        if (best_size != 0) {
+            /*
+             * split the block
+             * curr = pointer to the current block
+             * split current into the reserved block and reserved->next
+             * 
+            */
+            
+            
+            reserved = curr;
+            
+            // finish splitting ptrs
+        }
     }
-    current->size = size;
-    current->is_free = false;
-    List.available -= current->size + sizeof(current);
-    return current;
+    reserved->size = size;
+    reserved->is_free = false;
+    List.available -= reserved->size + sizeof(reserved);
+    return reserved;
 }
 
-int myfree(Block *to_free) {
+void *mycalloc(size_t num, size_t size);
+
+void *myrealloc(void *ptr, size_t new_size);
+
+int myfree(void *ptr) {
+    Block *to_free = (Block *) ptr;
+
     if (to_free == NULL) {
         return FAILURE;
     }
