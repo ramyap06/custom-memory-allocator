@@ -34,6 +34,7 @@ static inline header * allocate_object(size_t raw_size) {
   while (alloc_block != sentinel && min_size > alloc_block->size_state) {
     alloc_block = alloc_block->next;
   }
+  // doesn't look for other free lists
   if (alloc_block == sentinel) {
     return NULL;
   }
@@ -50,7 +51,7 @@ static inline header * allocate_object(size_t raw_size) {
     block_two->prev = block_one;
     block_one->left_size = alloc_block->left_size;
 
-
+      // since best fit only one possible situation
     if (min_size >= size_diff) {
       block_one->size_state = size_diff;
       block_two->size_state = min_size;
@@ -72,7 +73,7 @@ static inline header * allocate_object(size_t raw_size) {
           break;
         }
       }
-      
+      // no need to sort like this, doesn't change left_size
       sentinel = &freelistSentinels[freelist_idx];
       header * curr = sentinel->next;
 
@@ -81,6 +82,7 @@ static inline header * allocate_object(size_t raw_size) {
           break;
         }
       }
+      // lowk doesn't look right
       block_one->prev = curr;
       block_one->next = curr->next;
       block_one->next->prev = block_one;
